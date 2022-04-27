@@ -14,7 +14,7 @@ public class HillCipher {
         Scanner s = new Scanner(System.in);
         System.out.print("Enter your message: ");
         String message = s.nextLine();
-        System.out.print("\nEnter your a, b, c, and d for the matrix encryption.\na is top-left, b is top right, c is bottom-left,\nand d is bottom-right: ");
+        System.out.print("\nEnter your a, b, c, and d for the matrix encryption.\na is top-left, b is top right, c is bottom-left,\nand d is bottom-right (use space as seperator): ");
         //the matrix used for encryption
         int[][] matrix = new int[][] { { s.nextInt(), s.nextInt() }, { s.nextInt(), s.nextInt() } };
         System.out.println("\nHere is your matrix:");
