@@ -7,8 +7,6 @@ import java.util.Scanner;
  * Elgamal takes (p,g,b) --> (p,g,B)
  * For encryption: r nonce --> R
  * For decryption: R, prime, b 
- * IMPORTANT: THIS PROGRAM DOES NOT DO THE ENCODING OF MESSAGE.
- * THE MESSAGE SHOULD BE ENCODED PRIOR TO RUNNING THIS PROGRAM.
  * THIS PROGRAM IS NOT MADE TO HANDLE SUPER LARGE NUMBERS AS THIS
  * IS JUST A DEMONSTRATION OF Elgamal
  */
@@ -24,9 +22,9 @@ public class Elgamal {
             prime = rand.nextInt(100000) + 1;
         }
         System.out.print("this is your 'large' prime: " + prime);
-
-        System.out.print("\nEnter your message as numbers, message < prime: ");
-        String message = s.nextLine().replaceAll("[^0-9]", "");
+        System.out.print("\nEnter your message: ");
+        char[] message = s.nextLine().toCharArray();
+        // char[] message = (s.nextLine().replaceAll("[^0-9]", "")).toCharArray();
         System.out.print("\n\nEnter a value for g (a primtive root of prime): ");
         int g = s.nextInt();
         while (egcf(g, prime)[0] != 1) {
@@ -44,19 +42,80 @@ public class Elgamal {
         //calculating R from nonce r --> (modular exponentation) (g^r) % p
         BigInteger R = BigInteger.valueOf(g).modPow(r, BigInteger.valueOf(prime));
         System.out.println("\nR: " + R);
-
-        /** encryption section **/
-        BigInteger m = new BigInteger(message);
-        //calculating n encrypted text --> (m * ((B^r) % prime)) % prime 
-        BigInteger n = (m.multiply(BigInteger.valueOf(B).modPow(r, BigInteger.valueOf(prime)))).mod(BigInteger.valueOf(prime));
-        System.out.println("\nencrypted ciphertext: " + n);        
+        /** encryption */
+        int[] eText = encrypt(message, B, r, prime);
+        System.out.println("\nencrypted number: " + sValue(eText));        
         /** decryption section **/
-        //exponent value for decryption --> prime - 1 -b
+        int[] cText = decrypt(eText, b, prime, R);
+        System.out.println("\ndecrypted number: " + sValue(cText));        
+        System.out.println("\ndecrypted message: " + findChar(cText));        
+    }
+    /** 
+     * method for converting array of int to string using ASCII table
+     */
+    public static String findChar(int[] array)
+    {
+        String str = "";
+        //converts int to ascii value
+        for(int i = 0; i<array.length;i++)
+        {
+            str = str +  (char) array[i];
+        }
+        return str;
+    }
+    /** 
+     * method used for outputting int array as a single string
+     * */
+    public static String sValue(int[] array)
+    {
+        String str = "";
+        //adds int value to string str
+        for(int i = 0; i < array.length; i++)
+        {
+            str+= String.valueOf(array[i]);
+        }
+        return str;
+    }
+    /**
+     * method for decrypting
+     * @param eMessage encrypted message
+     * @param b bvalue
+     * @param prime prime
+     * @param R big R
+     * @return decrypted int array
+     */
+    public static int[] decrypt(int[] eMessage, int b, int prime, BigInteger R)
+    {
+        //returned later
+        int [] clear = new int[eMessage.length];
+        //loop through the message
+        for(int i = 0; i < eMessage.length;i++)
+        {
         BigInteger exponenet = (BigInteger.valueOf(prime).subtract(BigInteger.ONE)).subtract(BigInteger.valueOf(b));
+        BigInteger n = BigInteger.valueOf(eMessage[i]);
         //calculating c clear text --> (n * ((R^(p-1-b)) % prime)) % prime  
-        BigInteger c = (n.multiply(R.modPow(exponenet, BigInteger.valueOf(prime)))).mod(BigInteger.valueOf(prime));
-        System.out.println("\nclear text: " + c);
-
+        clear[i] = ((n.multiply(R.modPow(exponenet, BigInteger.valueOf(prime)))).mod(BigInteger.valueOf(prime))).intValue();
+        }
+        return clear;
+    }
+    /**
+     * 
+     * @param message message
+     * @param B big B
+     * @param r nonce
+     * @param prime prime
+     * @return encrypted array of numbers
+     */
+    public static int[] encrypt(char[] message, int B, BigInteger r, int prime)
+    {
+        int[] ciphertext = new int[message.length];
+        for(int i = 0; i < message.length;i++)
+        {
+            BigInteger m = BigInteger.valueOf((int) message[i]);
+            ciphertext[i] = ((m.multiply(BigInteger.valueOf(B).modPow(r, BigInteger.valueOf(prime)))).mod(BigInteger.valueOf(prime))).intValue();
+        }
+        //calculating n encrypted text --> (m * ((B^r) % prime)) % prime 
+       return ciphertext;
     }
 
     //** method for checking if a number is prime */
