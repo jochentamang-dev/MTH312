@@ -1,6 +1,7 @@
 package Ciphers;
 
 import java.math.BigInteger;
+import java.util.Random;
 import java.util.Scanner;
 /** 
  * Elgamal takes (p,g,b) --> (p,g,B)
@@ -16,15 +17,16 @@ public class Elgamal {
     public static void main(String[] args) {
         /**Inputs, etc. */
         Scanner s = new Scanner(System.in);
-        System.out.print("Enter your message as numbers: ");
-        String message = s.nextLine().replaceAll("[^0-9]", "");
-        System.out.print("\nEnter a prime number: ");
-        int prime = s.nextInt();
-        // checking if prime
-        while (!checkPrime(prime)) {
-            System.out.println("\n" + prime + " is not a prime.\nEnter a different number: ");
-            prime = s.nextInt();
+        Random rand = new Random(); // generate a random number
+        //generate random prime
+        int prime = rand.nextInt(100000) + 1;
+        while (!checkPrime(prime)) {          
+            prime = rand.nextInt(100000) + 1;
         }
+        System.out.print("this is your 'large' prime: " + prime);
+
+        System.out.print("\nEnter your message as numbers, message < prime: ");
+        String message = s.nextLine().replaceAll("[^0-9]", "");
         System.out.print("\n\nEnter a value for g (a primtive root of prime): ");
         int g = s.nextInt();
         while (egcf(g, prime)[0] != 1) {
