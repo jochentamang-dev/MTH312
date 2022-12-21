@@ -1,3 +1,3 @@
 # MTH312
-JAVA IMPLEMENTATIONS OF VARIOUS CIPHERS
-AUTHOR: JOCHEN TAMANG
+Java Implementations of various ciphers
+Developer: Jochen Tamang
